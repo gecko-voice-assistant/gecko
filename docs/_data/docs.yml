@@ -1,0 +1,19 @@
+- title: Welcome
+  docs:
+    - home
+    - about
+    - installation
+
+- title: Blog
+  blog:
+
+
+- title: Contributing
+  docs:
+
+- title: Create Skills
+  docs:
+    - create-skills/instruction
+    - create-skills/locales
+    - create-skills/sdk
+    - create-skills/manifest

@@ -1,6 +1,62 @@
-title: Minimal theme
-logo: /assets/img/logo.png
-description: Minimal is a theme for GitHub Pages.
-show_downloads: true
-google_analytics:
-theme: jekyll-theme-minimal
+# Site settings
+title: G.E.C.K.O.
+email: finn.wehn@smail.th-koeln.de
+description: >
+  Documentation of this Project
+lang: en-US
+
+baseurl: "/gecko"
+url: https://gecko-voice-assistant.github.io/gecko/
+git_address: https://github.com/gecko-voice-assistant/gecko
+git_edit_address: https://github.com/fwehn/pp-voiceassistant/tree/master/docs
+
+# theme options from https://bootswatch.com/3/
+# comment out this to use default Bootstrap
+bootwatch: superhero # cerulean cosmo custom cyborg darkly flatly journal lumen readable sandstone simplex slate solar spacelab superhero united yeti
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+# Plugins (previously gems:)
+plugins:
+  - jekyll-feed
+  - jekyll-redirect-from
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - jekyll-relative-links
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - .idea/
+  - .gitignore
+  - README.md
+timezone: Europe/Berlin
+defaults:
+  - scope:
+      path: _posts
+      type: posts
+    values:
+      layout: post
+      sectionid: blog
+
+  - scope:
+      path: _docs
+      type: docs
+    values:
+      layout: docs
+      sectionid: docs
+      seo:
+        type: "WebPage"
+
+relative_links:
+  enabled:     true
+  collections: true
+
+collections:
+  docs:
+    permalink: /:collection/:path/
+    output: true
+  posts:
+    permalink: /blog/:year/:month/:day/:title/
+    output: true
