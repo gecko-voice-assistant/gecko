@@ -3,6 +3,8 @@ title: SDK
 permalink: /docs/create-skills/sdk/
 ---
 
+[//]: # (todo change language)
+
 Ich habe, für die Entwicklung neuer Skills, ein eigenes SDK (**S**oftware **D**evelopment **K**it) erstellt.  
 Dieses kümmert sich, in Zusammenarbeit mit dem [Skillmanager](./../client/skillmanager.md), um nützliche Funktionen wie zum Beispiel die Sprachausgabe, oder aber den Umgang mit den [Antwortsätzen](./locales.md#answers).  
 

@@ -3,6 +3,8 @@ title: Anleitung
 permalink: /docs/create-skills/instruction/
 ---
 
+[//]: # (todo change language)
+
 Diese Seite richtet sich in erster Linie an Entwicklerinnen und Entwickler, die einen Skill für mein System entwickeln möchten.  
 Hier wird zunächst die Befehls- und Ordnerstruktur eines Skills beschrieben.  
 Hat man alle Dateien wie beschrieben angelegt und sich überlegt, wie die einzelnen Befehle eines Skills aussehen sollen, kann man auf den Seiten zu den Locales-Dateien und zum SDK nachschauen wie ein solcher Skill erstellt wird.  

@@ -3,6 +3,8 @@ title: Locales
 permalink: /docs/create-skills/locales/
 ---
 
+[//]: # (todo change language)
+
 Im Folgenden ist der Aufbau einer Locale-Datei, also einer Datei die zur Lokalisierung aber auch zur Definition des Aufbaus eines Befehls dient, beschrieben.  
 Es werden die benötigten Angaben und deren Funktion erklärt.  
 

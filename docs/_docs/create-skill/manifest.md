@@ -3,6 +3,8 @@ title: Manifest
 permalink: /docs/create-skills/manifest/
 ---
 
+[//]: # (todo change language)
+
 Hier wird der Aufbau der ``manifest.json`` beschrieben.  
 Diesen habe ich in stark vereinfachter Form von Home Assistant übernommen.  
 Welche Angaben müssen vorhanden sein?  
