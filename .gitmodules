@@ -1,0 +1,9 @@
+[submodule "skillmanager"]
+	path = skillmanager
+	url = https://github.com/gecko-voice-assistant/skillmanager.git
+[submodule "frontend"]
+	path = frontend
+	url = https://github.com/gecko-voice-assistant/frontend.git
+[submodule "skillkit"]
+	path = skillkit
+	url = https://github.com/gecko-voice-assistant/skillkit.git
