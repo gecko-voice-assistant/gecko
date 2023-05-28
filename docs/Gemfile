@@ -14,7 +14,7 @@ gem "github-pages", group: :jekyll_plugins
 #    gem "jekyll-seo-tag"
 # end
 
-gem 'jekyll-multiple-languages-plugin'
+gem 'jekyll-multiple-languages-plugin', '~> 1.8'
 
 # Windows and JRuby does not include zoneinfo files, so bundle the tzinfo-data gem
 # and associated library.
