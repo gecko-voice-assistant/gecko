@@ -1,0 +1,1 @@
+Das ist die Deutsche Version der About-Seite!
