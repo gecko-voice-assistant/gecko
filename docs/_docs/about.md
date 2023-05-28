@@ -4,4 +4,3 @@ permalink: /docs/about/
 ---
 
 
-{% translate_file about/about.md %}
