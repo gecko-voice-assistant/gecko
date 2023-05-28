@@ -17,15 +17,6 @@ bootwatch: superhero # cerulean cosmo custom cyborg darkly flatly journal lumen 
 # Build settings
 markdown: kramdown
 highlighter: rouge
-
-languages: ["en", "de"]
-exclude_from_localizations: ["assets", "CNAME"]
-defaultLang: en
-languageNames:
-  de: Deutsch
-  en: English
-
-
 # Plugins (previously gems:)
 plugins:
   - jekyll-feed
@@ -33,7 +24,6 @@ plugins:
   - jekyll-seo-tag
   - jekyll-sitemap
   - jekyll-relative-links
-  - jekyll-multiple-languages-plugin
 
 exclude:
   - Gemfile
