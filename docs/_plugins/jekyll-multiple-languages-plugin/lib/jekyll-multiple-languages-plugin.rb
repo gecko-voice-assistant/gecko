@@ -17,15 +17,6 @@ require_relative "plugin/version"
 module Jekyll
 
   #*****************************************************************************
-  # :site, :post_render hook
-  #*****************************************************************************
-  Jekyll::Hooks.register :site, :pre_render do |site, payload|
-      lang = site.config['lang']
-      puts "Loading translation from file #{site.source}/_i18n/#{lang}.yml"
-      site.parsed_translations[lang] = YAML.load_file("#{site.source}/_i18n/#{lang}.yml")
-  end
-
-  #*****************************************************************************
   # :site, :post_write hook
   #*****************************************************************************
   Jekyll::Hooks.register :site, :post_write do |site|
@@ -36,7 +27,7 @@ module Jekyll
     current_lang = site.config["lang"]
     exclude_paths = site.config["exclude_from_localizations"]
 
-    if (default_lang == current_lang && site.config["default_locale_in_subfolder"])
+    if (default_lang == current_lang)
       files = Dir.glob(File.join("_site/" + current_lang + "/", "*"))
       files.each do |file_path|
         parts = file_path.split('/')
@@ -64,6 +55,9 @@ module Jekyll
 
   end
 
+  #*****************************************************************************
+  # :site, :post_render hook
+  #*****************************************************************************
   Jekyll::Hooks.register :site, :post_render do |site, payload|
 
     # Removes all static files that should not be copied to translated sites.
@@ -74,22 +68,19 @@ module Jekyll
     static_files  = payload["site"]["static_files"]
     exclude_paths = payload["site"]["exclude_from_localizations"]
 
-    default_locale_in_subfolder = site.config["default_locale_in_subfolder"]
-
     if default_lang != current_lang
+
       static_files.delete_if do |static_file|
-        next true if (static_file.name == 'base.html' && default_locale_in_subfolder)
+        if (static_file.name == 'base.html')
+          true
+        else
+          # Remove "/" from beginning of static file relative path
+          static_file_r_path    = static_file.instance_variable_get(:@relative_path).dup
+          static_file_r_path[0] = ''
 
-        # Remove "/" from beginning of static file relative path
-        if static_file.instance_variable_get(:@relative_path) != nil
-          static_file_r_path = static_file.instance_variable_get(:@relative_path).dup
-          if static_file_r_path
-            static_file_r_path[0] = ''
-
-            exclude_paths.any? do |exclude_path|
-              Pathname.new(static_file_r_path).descend do |static_file_path|
-                break(true) if (Pathname.new(exclude_path) <=> static_file_path) == 0
-              end
+          exclude_paths.any? do |exclude_path|
+            Pathname.new(static_file_r_path).descend do |static_file_path|
+              break(true) if (Pathname.new(exclude_path) <=> static_file_path) == 0
             end
           end
         end
@@ -100,17 +91,7 @@ module Jekyll
 
   end
 
-  #*****************************************************************************
-  # :site, :pre_render hook
-  #*****************************************************************************
-  Jekyll::Hooks.register :site, :pre_render do |site, payload|
 
-    # Localize front matter data of every page.
-    #===========================================================================
-    (site.pages + site.documents).each do |item|
-      translate_props(item.data, site)
-     end
-  end
 
   ##############################################################################
   # class Site
@@ -134,8 +115,6 @@ module Jekyll
 
       self.config['exclude_from_localizations'] ||= []
 
-      self.config['default_locale_in_subfolder'] ||= false
-
       if ( !self.config['languages']         or
             self.config['languages'].empty?  or
            !self.config['languages'].all?
@@ -150,8 +129,8 @@ module Jekyll
       #-------------------------------------------------------------------------
 
       # Original Jekyll configurations
-      baseurl_org                 = self.config[ 'baseurl' ].to_s # Baseurl set on _config.yml
-      dest_org                    = self.dest                     # Destination folder where the website is generated
+      baseurl_org                 = self.config[ 'baseurl' ] # Baseurl set on _config.yml
+      dest_org                    = self.dest                # Destination folder where the website is generated
 
       # Site building only variables
       languages                   = self.config['languages'] # List of languages set on _config.yml
@@ -171,14 +150,9 @@ module Jekyll
       languages.each do |lang|
 
         # Language specific config/variables
-        if lang != self.config['default_lang'] || self.config['default_locale_in_subfolder']
-          @dest                  = dest_org    + "/" + lang
-          self.config['baseurl'] = baseurl_org + "/" + lang
-          self.config['lang']    =                     lang
-        end
-
-        # Translate site attributes to current language
-        translate_props(self.config, self)
+        @dest                  = dest_org    + "/" + lang
+        self.config['baseurl'] = baseurl_org + "/" + lang
+        self.config['lang']    =                     lang
 
         puts "Building site for language: \"#{self.config['lang']}\" to: #{self.dest}"
 
@@ -217,26 +191,6 @@ module Jekyll
 
 
   ##############################################################################
-  # class PageReader
-  ##############################################################################
-  class PageReader
-    alias :read_org :read
-
-    #======================================
-    # read
-    #
-    # Monkey patched this method to remove excluded languages.
-    #======================================
-    def read(files)
-      read_org(files).reject do |page|
-        page.data['languages'] && !page.data['languages'].include?(site.config['lang'])
-      end
-    end
-  end
-
-
-
-  ##############################################################################
   # class PostReader
   ##############################################################################
   class PostReader
@@ -260,14 +214,11 @@ module Jekyll
 
 
 
-  #-----------------------------------------------------------------------------
-  #
-  # Include (with priority—prepend)the translated
-  # permanent link for Page and document
-  #
-  #-----------------------------------------------------------------------------
+  ##############################################################################
+  # class Page
+  ##############################################################################
+  class Page
 
-  module Permalink
     #======================================
     # permalink
     #======================================
@@ -276,18 +227,13 @@ module Jekyll
 
       if site.config['relative_permalinks']
         File.join(@dir,  data['permalink'])
-      elsif site.config['lang']
-        # Look if there's a permalink overwrite specified for this lang
-        data['permalink_' + site.config['lang']] || data['permalink']
       else
-        data['permalink']
+        # Look if there's a permalink overwrite specified for this lang
+        data['permalink_'+site.config['lang']] || data['permalink']
       end
 
     end
   end
-
-  Page.prepend(Permalink)
-  Document.prepend(Permalink)
 
 
   ##############################################################################
@@ -347,6 +293,21 @@ module Jekyll
         })
       end
     end
+
+    #======================================
+    # permalink
+    #======================================
+    def permalink
+      return nil if data.nil? || data['permalink'].nil?
+
+      if site.config['relative_permalinks']
+        File.join(@dir,  data['permalink'])
+      else
+        # Look if there's a permalink overwrite specified for this lang
+        data['permalink_'+site.config['lang']] || data['permalink']
+      end
+
+    end
   end
 
 
@@ -392,18 +353,19 @@ module Jekyll
 
       lang = site.config['lang']
 
+      unless site.parsed_translations.has_key?(lang)
+        puts              "Loading translation from file #{site.source}/_i18n/#{lang}.yml"
+        site.parsed_translations[lang] = YAML.load_file("#{site.source}/_i18n/#{lang}.yml")
+      end
+
       translation = site.parsed_translations[lang].access(key) if key.is_a?(String)
 
       if translation.nil? or translation.empty?
          translation = site.parsed_translations[site.config['default_lang']].access(key)
 
-        if site.config["verbose"]
-          puts "Missing i18n key: #{lang}:#{key}"
-          puts "Using translation '%s' from default language: %s" %[translation, site.config['default_lang']]
-        end
+        puts "Missing i18n key: #{lang}:#{key}"
+        puts "Using translation '%s' from default language: %s" %[translation, site.config['default_lang']]
       end
-
-      TranslatedString.translate(key, lang, site)
 
       translation
     end
@@ -434,24 +396,9 @@ module Jekyll
 
         site = context.registers[:site] # Jekyll site object
 
-        default_lang = site.config['default_lang']
-
-        validate_file_name(file)
-
         includes_dir = File.join(site.source, '_i18n/' + site.config['lang'])
 
-        # If directory doesn't exist, go to default lang
-        if !Dir.exist?(includes_dir)
-          includes_dir = File.join(site.source, '_i18n/' + default_lang)
-        elsif
-          # If file doesn't exist, go to default lang
-          Dir.chdir(includes_dir) do
-            choices = Dir['**/*'].reject { |x| File.symlink?(x) }
-            if !choices.include?(  file)
-              includes_dir = File.join(site.source, '_i18n/' + default_lang)
-            end
-          end
-        end
+        validate_file_name(file)
 
         Dir.chdir(includes_dir) do
           choices = Dir['**/*'].reject { |x| File.symlink?(x) }
@@ -475,25 +422,6 @@ module Jekyll
           end
 
         end
-      end
-    end
-
-    # Override of core Jekyll functionality, to get rid of deprecation
-    # warning. See https://github.com/jekyll/jekyll/pull/7117 for more
-    # details.
-    class PostComparer
-      def initialize(name)
-        @name = name
-
-        all, @path, @date, @slug = *name.sub(%r!^/!, "").match(MATCHER)
-        unless all
-          raise Jekyll::Errors::InvalidPostNameError,
-                "'#{name}' does not contain valid date and/or title."
-        end
-
-        escaped_slug = Regexp.escape(slug)
-        @name_regex = %r!_posts/#{path}#{date}-#{escaped_slug}\.[^.]+|
-          ^#{path}_posts/?#{date}-#{escaped_slug}\.[^.]+!x
       end
     end
   end
@@ -537,12 +465,9 @@ module Jekyll
       lang         = key[1] || site.config[        'lang']
       default_lang =           site.config['default_lang']
       baseurl      =           site.baseurl
-      pages        =           site.pages
       url          = "";
 
-      if default_lang != lang || site.config['default_locale_in_subfolder']
-        baseurl = baseurl + "/" + lang
-      end
+      baseurl = baseurl + "/" + lang
 
       collections = site.collections.values.collect{|x| x.docs}.flatten
       pages = site.pages + collections
@@ -597,86 +522,6 @@ end
 
 
 
-#======================================
-# translate_key
-#
-# Translate given key to given language.
-#======================================
-def translate_key(key, lang, site)
-  unless site.parsed_translations.has_key?(lang)
-    puts              "Loading translation from file #{site.source}/_i18n/#{lang}.yml"
-    site.parsed_translations[lang] = YAML.load_file("#{site.source}/_i18n/#{lang}.yml")
-  end
-
-  translation = site.parsed_translations[lang].access(key) if key.is_a?(String)
-
-  if translation.nil? or translation.empty?
-    translation = site.parsed_translations[site.config['default_lang']].access(key)
-
-    puts "Missing i18n key: #{lang}:#{key}"
-    puts "Using translation '%s' from default language: %s" %[translation, site.config['default_lang']]
-  end
-
-  translation
-end
-
-
-################################################################################
-# class TranslatedString
-################################################################################
-class TranslatedString < String
-  #======================================
-  # initialize
-  #======================================
-  def initialize(*several_variants, key)
-    super(*several_variants)
-    @key = key
-  end
-
-  def key
-    @key
-  end
-
-  #======================================
-  # translate
-  #======================================
-  def self.translate(str, lang, site)
-    if str.is_a?(TranslatedString)
-      key = str.key
-    else
-      key = str
-    end
-    return TranslatedString.new(translate_key(key, lang, site), key = key)
-  end
-end
-
-
-#======================================
-# translate_props
-#
-# Perform translation of properties defined in translation property list.
-#======================================
-def translate_props(data, site, props_key_name = 'translate_props')
-  lang = site.config['lang']
-  (data[props_key_name] || []).each do |prop_name|
-    if prop_name.is_a?(String)
-      prop_name = prop_name.strip
-      if prop_name.empty?
-        puts "There is an empty property defined in '#{props_key_name}'"
-      else
-        prop_value = data[prop_name]
-        if prop_value.is_a?(String) and !prop_value.empty?
-          data[prop_name] = TranslatedString.translate(prop_value, lang, site)
-        end
-      end
-    else
-      puts "Incorrect property name '#{prop_name}'. Must be a string"
-    end
-  end
-end
-
-
-
 ################################################################################
 # Liquid tags definitions
 
@@ -686,3 +531,4 @@ Liquid::Template.register_tag('tf',             Jekyll::Tags::LocalizeInclude)
 Liquid::Template.register_tag('translate_file', Jekyll::Tags::LocalizeInclude)
 Liquid::Template.register_tag('tl',             Jekyll::LocalizeLink         )
 Liquid::Template.register_tag('translate_link', Jekyll::LocalizeLink         )
+
