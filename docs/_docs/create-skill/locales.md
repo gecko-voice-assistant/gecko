@@ -4,81 +4,91 @@ permalink: /docs/create-skills/locales/
 ---
 
 [//]: # (todo change language)
+[//]: # (todo links neue einfügen)
 
-Im Folgenden ist der Aufbau einer Locale-Datei, also einer Datei die zur Lokalisierung aber auch zur Definition des Aufbaus eines Befehls dient, beschrieben.  
-Es werden die benötigten Angaben und deren Funktion erklärt.  
+In the following the structure of a Locale file, i.e. a file which serves for the localization but also for the definition of the structure of a command, is described.  
+In the following the necessary data and their function are explained.
 
+## Example
 
-## Beispiel
-
-Ich erkläre die Funktionen und Begriffe anhand folgenden Beispiels aus dem [HelloWorld](https://github.com/fwehn/pp-voiceassistant/blob/main/src/skills/HelloWorld) Skill:  
+I explain the functions and terms using the following example from the [HelloWorld]() skill:
 
 ````json
 {
-  "invocation": "Hallo Welt",
-  "description": "Das ist ein ganz klassisches HelloWorld-Programm.\nBenutzte einen der unteren Sätze um es auszuprobieren.",
-  "intents": [
-    {
-      "sentences": ["sag ($slots/hello){hello} ($slots/world){world}"],
-      "function": "helloWorld",
-      "args": ["hello", "world"],
-      "answers": [""]
+  "options": {
+    "APIKey": {
+      "name": "APIKey",
+      "type": "String",
+      "default": "Enter your API-Key here, please."
     },
-    {
-      "sentences": ["sag ($slots/hello){hello}"],
-      "function": "hello",
-      "args": ["hello"],
-      "answers": [""]
+    "city": {
+      "name": "city",
+      "type": "Number",
+      "default": 50667
+    },
+    "country": {
+      "name": "country",
+      "type": "String",
+      "default": "DE"
+    },
+    "language": {
+      "name": "language",
+      "type": "String",
+      "default": "de"
+    },
+    "units": {
+      "name": "units",
+      "type": "String",
+      "default": "metric",
+      "choices": [
+        "standard",
+        "metric",
+        "imperial"
+      ]
     }
-  ],
-  "slots": {
-    "hello": ["Hallo", "Guten Tag"],
-    "world": ["Welt", "Erde"]
   }
 }
 ````
-*Aus [HelloWorld/de_DE.json](https://github.com/fwehn/pp-voiceassistant/blob/main/src/skills/HelloWorld/1.0/locales/de_DE.json)*
+*From [HelloWorld/en_US.json]()*
 
 ## Invocation
-Dieser Punkt bezeichnet den Namen des Befehls, unter dem man den Skill ansprechen kann.  
-Hier ist das "Hallo Welt".  
-Man kann auch Invocation Names übersetzten.  
-In der [``en_US.json``](https://github.com/fwehn/pp-voiceassistant/blob/main/src/skills/HelloWorld/1.0/locales/en_US.json) ist dieser Name zum Beispiel als "Hello World" definiert.  
-Üblicherweise wird der Invocation Name dazu genutzt, einen Skill eindeutig zu identifizieren.  
-Wenn man also zwei verschiedene Skills für die Wetterinformationen hat, kann man einen beispielsweise mit "OpenWeather" und den anderen mit "Deutscher Wetterdienst" aufrufen.  
+
+This item indicates the name of the command under which you can address the skill.  
+Here it is "Hello World".  
+You can also translate Invocation Names.  
+For example, in the [``de_DE.json``]() this name is defined as "Hallo Welt".  
+Usually the invocation name is used to uniquely identify a skill.  
 
 ## Intents
-Unter diesem Punkt sind alle Unterbefehle des Skills aufgeführt.  
-Jeder Befehl wird durch die folgenden Unterpunkte definiert:
+All sub-commands of the skill are listed under this item.  
+Each command is defined by the following subitems:
 
 ### Sentences
-Dies definiert die Sätze mit denen die einzelnen Unterbefehle genutzt werden können.  
-Die Syntax richtet sich dabei ganz nach der von [Rhasspy](https://rhasspy.readthedocs.io/en/latest/training/).  
-Hier werden die [Slots](#slots) eingebunden, welche weiter unten definiert, und von der [Funktion](#function) verwendet werden.  
+This defines the sentences with which the individual subcommands can be used.  
+The syntax is based on that of [Rhasspy](https://rhasspy.readthedocs.io/en/latest/training/).  
+Here the [slots](#slots) are included, which are defined further down, and used by the [function](#function).
 
 ### Function
-Hier ist die Funktion angegeben, die bei der Erkennung des Befehls ausgeführt werden soll.  
-Diese Funktion muss im ``src`` Verzeichnis des jeweiligen Skills, in der Datei ``index.js`` definiert und mittels ``module.exports`` von außen verfügbar gemacht werden.  
+This specifies the function to be executed when the command is recognized.  
+This function must be defined in the ``src`` directory of the respective skill, in the file ``index.js`` and made available from outside by means of ``module.exports``.
 
 ### Args
-Durch die ``Slots`` werden Argumente definiert, die in einem Unterbefehl genutzt werden können.  
-Die Reihenfolge der Argumente im Satz kann sich von Sprache zu Sprache unterscheiden.  
-Damit man nicht für jede Sprache eine eigene Funktion definieren muss, bei der sich lediglich die Parameter-Reihenfolge unterscheidet, gibt man unter ``args`` die gewünschte Reihenfolge an.  
-Die Namen müssen mit den Namen der Slots im ``sentences`` Punkt übereinstimmen. 
+The ``slots`` define arguments that can be used in a subcommand.  
+The order of the arguments in the sentence may differ from language to language.  
+To avoid having to define a separate function for each language where only the parameter order differs, specify the desired order in ``args``.  
+The names must match the names of the slots in the ``sentences`` item.
 
 ### Answers
-Für einige Funktionen ist es hilfreich Antwortsätze zu definieren.  
-Bei diesen Sätzen können, mittels des [sdk](./sdk.md#antwort-generieren), Zeichen durch im Code generierte Variablen ersetzt werden.  
-Ein auf diese Weise generierter Satz wird dann vom TTS-System ausgesprochen.
+For some functions it is helpful to define answer sets.  
+For these sentences, characters can be replaced by variables generated in the code by means of the [sdk]().  
+A sentence generated in this way is then pronounced by the TTS system.
 
 ## Slots
-Hier werden alle Slots definiert die Rhasspy nicht bereits kennt.  
-Dazu gibt man unter dem Slot-Namen alle möglichen Werte des Slots als Array an.  
-Möchte man diese Slots verwenden, muss man sie unter ``sentences`` wie folgt angeben:  
-``($slots/<Name des Slots>){<Variablen Name>}``  
- 
-Den Slot ``($slots/zigbee2mqtt){zigbee2mqtt}`` muss man nicht extra definieren.  
-Dieser wird beim start des Skillmanagers automatisch erstellt und beinhaltet alle Geräte und Gruppen, die in einer möglichen [Zigbee2MQTT-Instanz](https://zigbee2mqtt.io/) definiert wurden.  
-Darüber hinaus gibt es zwei Slots die durch [Rhasspy](https://rhasspy.readthedocs.io/en/latest/training/#built-in-slots) vorgegeben werden:
-- ``($rhasspy/days){<Variablen Name>}``: Enthält die Namen der Wochentage
-- ``($rhasspy/month){<Variablen Name>}``: Enthält die Namen der Monate
+Here all slots are defined that Rhasspy does not already know.  
+In addition one indicates all possible values of the slot as array under the slot name.  
+If you want to use these slots, you have to specify them under ``sentences`` as follows:  
+``($slots/<name of slot>){<variable name>}``
+
+In addition, there are two slots specified by [Rhasspy](https://rhasspy.readthedocs.io/en/latest/training/#built-in-slots):
+- ``($rhasspy/days){<variable name>}``: Contains the names of the days of the week.
+- ``($rhasspy/month){<variable name>}``: Contains the names of the months

@@ -1,32 +1,25 @@
 ---
-title: Anleitung
-permalink: /docs/create-skills/instruction/
+title: Getting Started
+permalink: /docs/create-skills/getting-started/
 ---
 
-[//]: # (todo change language)
+This page explains how to create and install new skills.
 
-Diese Seite richtet sich in erster Linie an Entwicklerinnen und Entwickler, die einen Skill für mein System entwickeln möchten.  
-Hier wird zunächst die Befehls- und Ordnerstruktur eines Skills beschrieben.  
-Hat man alle Dateien wie beschrieben angelegt und sich überlegt, wie die einzelnen Befehle eines Skills aussehen sollen, kann man auf den Seiten zu den Locales-Dateien und zum SDK nachschauen wie ein solcher Skill erstellt wird.  
-Anschließend findet man auf dieser Seite eine kurze Anleitung, wie man seinen Skill am besten verpackt, um ihn zu installieren. 
+## Structure of a voice command
 
-## Aufbau eines Befehls
-
-Basierend auf dem Befehls-Aufbau von [Alexa](./../evaluation/amazonalexa.md) und dem [Google Assistant](./../evaluation/googleassistant.md) habe ich mich dazu entschlossen, einen sehr ähnlichen, wenn nicht sogar den gleichen Aufbau vorauszusetzen.  
-Daher sieht der Aufbau der Befehle wie folgt aus:
+Each voice command is structured as follows:
 
 ``<wake word>, <launch> <Invocation name> <utterance>``
 
-- ``wake word``: Das Wake Word ist das Wort, mit welchem man den Sprachassistenten "aufwecken" kann. Dieses wird von Rhasspy vorausgesetzt.
-- ``launch``: Hierbei handelt es sich um eine Sammlung an Füllwörtern, welche in der [``defaults.json``](https://github.com/fwehn/pp-voiceassistant/blob/main/src/client/defaults.json) definiert wurden.
-- ``invocation``: Das ist der Name, mit dem man den Skill auswählt, z.B. ``Hallo Welt`` für [HelloWorld](https://github.com/fwehn/pp-voiceassistant/blob/main/src/skills/HelloWorld/1.0/src/index.js).
-- ``utterance``: Utterance ist der Unterbefehl, welcher die einzelnen Funktionen eines Skills darstellt.
+- ``wake word``: The voice assistant is awakened with the wake word, this is specified by Rhasspy.
+- ``launch``: This is a collection of filler words, such as: "start", "use", "open".
+- ``invocation``: This is the name with which you specify the skill.
+- ``utterance``: Utterance is the subcommand that represents the individual functions of a skill.
 
 
-## Ordner anlegen
+## Structure of a skill
 
-Ich habe mich für folgende Ordnerstruktur (am Beispiel des [HelloWorld](https://github.com/fwehn/pp-voiceassistant/blob/main/src/skills/HelloWorld/1.0/src/index.js) Skills) entschieden.  
-Diese ähnelt sehr stark der Struktur von Amazon.
+A skill is structured as follows:
 
 ```
 HelloWorld   
@@ -35,48 +28,39 @@ HelloWorld
 │   ├── manifest.json
 │   │
 │   ├── locales
-│   │   ├── de_DE.json
-│   │   └── en_US.json
+│   │   ├── en_US.json
+│   │   └── de_DE.json
 │   │
 │   └── src
+│       ├── pkage.json
 │       └── index.js
 │
 └── <other-version-tag>
     ...
 ```
 
-Jede Version eines Skills wird durch einen Ordner dargestellt.  
-In jedem dieser Ordner gibt es eine ``manifest.json`` und die beiden Unterordner ``src`` und ``locales``.  
-In der ``manifest.json`` werden, für den Skill notwendige Angaben gespeichert, wie z.B. verschiedene [npm-dependencies](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#dependencies), die für den Skill benötigt werden.  
-Oder Variablen, welche der Endnutzer über das [Webinterface](./../client/webinterface.md#details) einstellen soll.  
-Was in einer solchen ``manifest.json``-Datei stehen muss, habe ich [hier](./manifest.md) näher beschrieben.
+Each version of a skill is represented by a folder.  
+In each of these folders there is a ``manifest.json`` and the two subfolders ``src`` and ``locales``.  
+In the ``manifest.json`` necessary information for the skill is stored, such as the options, which can be configured via the web interface.
 
-Im Unterordner ``locales`` befinden sich die Dateien, welche den Aufbau eines Befehls definieren. Dabei handelt es sich bei jeder Datei um eine jeweilige Sprache bzw. Lokalisierung.
+What must be in such a ``manifest.json`` file is described in more detail [here](./manifest.md).
 
-``de_DE.json`` -> deutscher Befehl  
-``en_US.json`` -> amerikanisches Englisch
+The subfolder ``locales`` contains the files that define the structure of a command. 
+Each file is a respective language or localization.
 
-Die Dateien sind im JSON Format geschrieben.  
-Den Aufbau einer solchen Datei findet man [hier](./locales.md).
+``en_US.json`` -> english commands
+``de_DE.json`` -> german commands
 
-Im Unterordner ``src`` befindet sich der gesamte Code des Befehls, welcher in JavaScript geschrieben sein muss.  
-Dazu wird eine Datei mit dem Namen ``index.js`` benötigt.  
-Ich habe ein [SDK](https://github.com/fwehn/pp-voiceassistant/tree/main/src/sdk) erstellt welches die Kommunikation zwischen Skill und Rhasspy übernimmt.  
-Wie man dieses SDK benutzt habe ich [hier](./sdk.md) näher beschrieben.
+The files are written in JSON format.  
+The structure of such a file can be found [here](./locales.md).
 
-Um die Erstellung neuer Skills zu vereinfachen, habe ich einen [Dummy](https://github.com/fwehn/pp-voiceassistant/tree/main/src/skills/_dummy) erstellt, aus dem man leicht einen neuen Skill anlegen kann.  
+The subfolder ``src`` contains all the code of the command, which must be written in JavaScript.  
+This requires a file named ``index.js``.
+To use the skillmanager functions within a skill, an SDK was created.
+Its documentation can be found [here](./sdk.md).
 
-## Zip erstellen
-Um möglichst einfach den SKill zu testen, muss man eine Zip-Datei erstellen.  
-Diese kann dann über die [Uploadseite](./../client/webinterface.md#upload) des Webinterfaces einfach installiert werden.  
-Wichtig ist dabei, dass man die Zip-Datei über die zwei oben genannten Verzeichnisse ``src`` und ``locales`` und die ``manifest.json`` erstellt und nicht aus dem Eltern-Verzeichnis.
+## Install skills locally
 
-### Windows
-Unter Windows geht das Erstellen der Zip sehr einfach.  
-1. Dazu einfach oben genannte Dateien auswählen.  
-![Dateien auswählen](./../../assets/img/Zip-Windows/dateienAuswaehlen.png)  
-
-2. "Rechtsklick" auf eine der Dateien.
-3. Auf "Senden an" klicken.  
-4. Und "ZIP-komprimierter Ordner" auswählen.  
-![Zip erstellen](./../../assets/img/Zip-Windows/zip-erstellen.png)  
+To test the SKill as easy as possible, you have to create a zip file.  
+This can then be easily installed via the "Install" page of the frontend.  
+It is important to create the zip file from the two directories mentioned above ``src`` and ``locales`` and the ``manifest.json`` and not from the parent directory.

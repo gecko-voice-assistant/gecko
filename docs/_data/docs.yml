@@ -1,15 +1,16 @@
 - title: Welcome
   docs:
     - home
-    - about
     - installation
+    - join
 
 - title: Contributing
   docs:
+    - contributing/project-structure
 
 - title: Create Skills
   docs:
-    - create-skills/instruction
+    - create-skills/getting-started
     - create-skills/locales
     - create-skills/sdk
     - create-skills/manifest

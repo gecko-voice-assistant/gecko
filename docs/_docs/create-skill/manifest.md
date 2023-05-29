@@ -3,22 +3,15 @@ title: Manifest
 permalink: /docs/create-skills/manifest/
 ---
 
-[//]: # (todo change language)
+[//]: # (todo links neu einfügen)
 
-Hier wird der Aufbau der ``manifest.json`` beschrieben.  
-Diesen habe ich in stark vereinfachter Form von Home Assistant übernommen.  
-Welche Angaben müssen vorhanden sein?  
-Wie kann ich Optionen definieren und welche Typen stehen dafür bereit?  
+Here the structure of the ``manifest.json`` is described.  
 
-## Beispiel
-Ich werde die einzelnen Angaben an folgendem Beispiel aus dem [GetWeather](https://github.com/fwehn/pp-voiceassistant/tree/main/src/skills/GetWeather) Skill erklären:   
+## Example
+The content of the ``manifest.json`` is explained with the following example of the [GetWeather]() skill:  
 
 ````json
 {
-  "version": "1.0",
-  "dependencies": {
-    "axios": "^0.23.0"
-  },
   "options": [
     {
       "name": "APIKey",
@@ -49,27 +42,16 @@ Ich werde die einzelnen Angaben an folgendem Beispiel aus dem [GetWeather](https
   ]
 }
 ````
-*[skills/GetWeather](https://github.com/fwehn/pp-voiceassistant/blob/main/src/skills/GetWeather/1.0/manifest.json)*
+*[skills/GetWeather]()*
 
-## Version
-Unter dem Punkt ``version`` steht ganz einfach der Tag der jeweiligen Version des Skills.  
-Dieser Tag sollte mit dem Verzeichnis der jeweiligen Version übereinstimmen.   
+## Options
+So that one can adapt the own Skill to the needs of the respective users, there are the options.  
+These can be defined under the item ``options``.  
+Later these options can be adjusted via the frontend.  
+In the above example, you can then specify your own API key or your own location, for example.
 
-## Abhängigkeiten
-Unter ``dependencies`` stehen alle vom Skill benötigten Abhängigkeiten.  
-Dabei handelt es sich bei diesen Abhängigkeiten um [npm-Dependencies](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#dependencies).  
-Beim Herunterladen eines Skills, werden dann alle angegebenen Pakete automatisch installiert, sodass der Skill reibungslos funktioniert.  
-Einige dieser Pakete werden jedoch vom Skillmanager benötigt und können daher zwar genutzt, jedoch nicht überschrieben werden.  
-Welche das sind, kann man in der [``defaults.json``](https://github.com/fwehn/pp-voiceassistant/blob/main/src/client/defaults.json) unter dem Punkt ``dependencies`` nachschauen.
-
-## Optionen
-Damit man den eigenen Skill auf die Bedürfnisse der jeweiligen Nutzerinnen und Nutzer anpassen kann, gibt es die Optionen.  
-Diese können unter dem Punkt ``options`` definieren.  
-Später können diese Optionen dann über das [Webinterface](./../client/webinterface.md#details) angepasst werden.  
-In obigem Beispiel kann man dann zum Beispiel einen eigenen API-Key oder den eigenen Wohnort angeben.  
-  
-Um eine Option zu definieren, muss man drei Felder definieren:  
-- ``name``: Der Name, der im Webinterface steht und unter dem man im Code die Option auslesen kann.
-- ``type``: Das bestimmt den Typen der Option, z.B. ``String`` oder ``Number``.  
-- ``default``: Beschreibt den Standardwert, welcher durch den Entwickler vorgegeben werden kann.
-- ``choices``: Damit soll es möglich sein, aus gegebenen Werten auswählen zu können. Das ist allerdings noch nicht implementiert.
+To define an option you have to define three fields:
+- ``name``: The name, which is in the webinterface and under which you can read the option in the code.
+- ``type``: This defines the type of the option, e.g. ``String`` or ``Number``.
+- ``default``: Describes the default value, which can be specified by the developer.
+- ``choices``: This should make it possible to select from given values. However, this is not implemented yet.
