@@ -64,3 +64,8 @@ Its documentation can be found [here](./sdk.md).
 To test the SKill as easy as possible, you have to create a zip file.  
 This can then be easily installed via the "Install" page of the frontend.  
 It is important to create the zip file from the two directories mentioned above ``src`` and ``locales`` and the ``manifest.json`` and not from the parent directory.
+
+## Promote your skills
+
+In our [Discord](../join.md#Discord) we have a channel where developers can present and promote their skills.
+If they are well received, they will be added to the official catalog.

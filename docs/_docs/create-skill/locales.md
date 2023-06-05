@@ -3,7 +3,6 @@ title: Locales
 permalink: /docs/create-skills/locales/
 ---
 
-[//]: # (todo change language)
 [//]: # (todo links neue einfügen)
 
 In the following the structure of a Locale file, i.e. a file which serves for the localization but also for the definition of the structure of a command, is described.  

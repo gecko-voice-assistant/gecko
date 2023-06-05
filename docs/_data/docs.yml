@@ -3,9 +3,11 @@
     - home
     - installation
     - join
+    - roadmap
 
 - title: Contributing
   docs:
+    - contributing/how-to
     - contributing/project-structure
 
 - title: Create Skills

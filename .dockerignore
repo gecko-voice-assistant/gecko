@@ -1,0 +1,5 @@
+.idea
+docs
+skillmanager/src/node_modules
+skillmanager/src/config
+skillmanager/src/skills

@@ -3,7 +3,6 @@ title: SDK
 permalink: /docs/create-skills/sdk/
 ---
 
-[//]: # (todo change language)
 [//]: # (todo link neu einbinden)
 
 To use the skillmanager functions within a skill, an SDK was created.
@@ -94,7 +93,7 @@ function getUrl() {
 In this example, the information set via the frontend is used to generate a URL to access the API of [OpenWeather](https://openweathermap.org/).
 
 
-[//]: # (todo matt functions beschreiben)
+[//]: # (todo mqtt functions beschreiben)
 
 ## Publish
 
