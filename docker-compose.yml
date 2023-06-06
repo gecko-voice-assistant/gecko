@@ -1,32 +1,6 @@
 version: "3.8"
 
 services:
-  mqttbroker:
-    image: eclipse-mosquitto
-    volumes:
-      - "./volumes/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf"
-      - "./volumes/mosquitto/data/:/mosquitto/data"
-      - "./volumes/mosquitto/log/:/mosquitto/log"
-    ports:
-      - "1883:1883"
-    networks:
-      - mqtt
-
-  rhasspy:
-    image: rhasspy/rhasspy
-    restart: unless-stopped
-    volumes:
-      - "./volumes/rhasspy/profiles:/profiles"
-      - "/etc/localtime:/etc/localtime:ro"
-    ports:
-      - "12101:12101"
-    networks:
-      - mqtt
-      - rhasspy
-#    devices:
-#      - "/dev/snd:/dev/snd"
-    command: --user-profiles /profiles --profile de
-
   skillmanager:
     build:
       dockerfile: ./skillmanager.Dockerfile
@@ -36,9 +10,6 @@ services:
       - "./volumes/skillmanager/skills:/usr/src/skillmanager/src/skills"
     ports:
       - "3000:3000"
-    networks:
-      - mqtt
-      - rhasspy
 
   frontend:
     build:
@@ -46,7 +17,3 @@ services:
     restart: unless-stopped
     ports:
       - "12102:80"
-
-networks:
-  mqtt:
-  rhasspy:
