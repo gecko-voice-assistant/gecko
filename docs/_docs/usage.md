@@ -1,6 +1,6 @@
 ---
 title: Usage
-permalink: /docs/Usage/
+permalink: /docs/usage/
 ---
 
 At the beginning you land on the "Home" page.  
