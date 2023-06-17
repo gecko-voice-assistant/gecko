@@ -5,15 +5,22 @@ services:
     build:
       dockerfile: ./skillmanager.Dockerfile
     restart: unless-stopped
+    networks:
+      - gecko
     volumes:
       - "./volumes/skillmanager/config:/usr/src/skillmanager/src/config"
       - "./volumes/skillmanager/skills:/usr/src/skillmanager/src/skills"
-    ports:
-      - "3000:3000"
 
   frontend:
     build:
       dockerfile: ./frontend.Dockerfile
     restart: unless-stopped
+    depends_on:
+      - skillmanager
+    networks:
+      - gecko
     ports:
       - "12102:80"
+
+networks:
+  gecko:
